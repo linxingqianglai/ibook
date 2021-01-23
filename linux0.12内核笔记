@@ -1,2 +1,2 @@
 tss, ldt存在内核代码中哪个地方？
-答：内核的 struct task_struct中指定了tss和ldt。 
+答：内核的 struct task_struct中指定了tss和ldt。 在这个结构中还指定了执行文件的inode， 当前工作路径等信息。
