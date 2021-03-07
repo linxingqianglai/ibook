@@ -1,0 +1,11 @@
+x window system系统里分为 x server和 x client, x protocol， x server负责将键盘鼠标输入事件传给x client, c client根据x server传过来的事件计算如何显示图形， 计算完， 
+再传给x server显示在显示器上。所以总结， x server负责显示图形， c client负责计算。 而至于 x protocol，是他二者之间通信的协议。x window system是可以支持远程方式的， x server程序是建立在
+客户机上， 则 x client则一直在服务器上。 
+他们之间如何具体通信的，可以参考以下链接： https://blog.csdn.net/u013491946/article/details/73849305
+
+再讲讲x window system socket 6000以上端口是干嘛用的。 6000端口是给x server服务用的， 当6000端口bind， listen的时候， 他会监听来自x client的连接， 从而建立连接， 两者即可通过 tcpip进行通信。
+在alt+crtl+【F2】等， 系统会首先会根据display（包含端口信息）建立600x端口监听， 同时将display信息传给shell， 后续有窗口程序需要进行， 则通过此display与x server进行通信显示图形。
+
+openssh里的x11转发原理：openssh客户端会建立一个x server， 但是数据是来自openssh服务器上601x端口(ssh在服务器上x server的起始端口号)中转得到的。
+ssh客户端会向ssh服务器发送x11请求， ssh服务器会建立端口601x监听， 同时将端口相关信息存入session对象的display变量中(session_setup_x11fwd函数中实现)，后面再启动shell前，将display通过如下调用流程
+来传递给shell： do_child->do_setup_env->child_set_env(&env, &envsize, "DISPLAY", s->display);
